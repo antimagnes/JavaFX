@@ -1,0 +1,53 @@
+package hu.frigo.javafx;
+
+import javafx.animation.TranslateTransition;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+import java.util.stream.IntStream;
+
+/**
+ * Created by frigo on 15/04/09.
+ */
+public class Tut3 extends Application {
+
+  public static final int ROW_COUNT = 10;
+  public static final int COL_COUNT = 10;
+  public static final int RADIUS = 20;
+  public static final int DIAMETER = RADIUS * 2;
+  public static final int WIDTH = COL_COUNT * DIAMETER;
+  public static final int HEIGHT = ROW_COUNT * DIAMETER;
+  public static final int MOVE_WAY = 100;
+
+  @Override
+  public void start(Stage primaryStage) throws Exception {
+    primaryStage.setTitle("Abacus JavaFrX " + this.getClass().getName());
+    Pane root = new Pane();
+
+    IntStream.range(1, 11).forEach(row -> {
+      Line rail = new Line(0, RADIUS + (row - 1) * DIAMETER, WIDTH + MOVE_WAY, RADIUS + (row - 1) * DIAMETER);
+      root.getChildren().add(rail);
+      IntStream.range(1, 11).forEach(column -> {
+        Circle circ = new Circle(column * DIAMETER - RADIUS, row * DIAMETER - RADIUS, RADIUS - 1);
+        root.getChildren().add(circ);
+        circ.setOnMouseClicked(event -> {
+          TranslateTransition move = new TranslateTransition(Duration.millis(200), circ);
+          move.setToX(Math.abs(circ.getTranslateX() - MOVE_WAY));
+          move.playFromStart();
+        });
+      });
+    });
+
+    primaryStage.setScene(new Scene(root, WIDTH + MOVE_WAY, HEIGHT));
+    primaryStage.show();
+  }
+
+  public static void main(String[] args) {
+    launch(args);
+  }
+}
